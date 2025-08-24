@@ -1,19 +1,12 @@
 rootProject.name = 'credi-ya-auth'
 
-include ':app-auth'
-include ':model'
-include ':port-out'
-include ':port-in'
-include ':exception'
-include ':service'
-include ':web'
-include ':persistence'
+include ':applications:app-auth'
+include ':applications:exception'
+include ':applications:port:in'
+include ':applications:service'
 
-findProject(':app-auth').projectDir = file('./applications/app-auth')
-findProject(':model').projectDir = file('./domain/model')
-findProject(':port-out').projectDir = file('./domain/port/out')
-findProject(':port-in').projectDir = file('./applications/port/in')
-findProject(':exception').projectDir = file('./applications/exception')
-findProject(':service').projectDir = file('./applications/service')
-findProject(':web').projectDir = file('./infrastructure/adapter/drive-in/web')
-findProject(':persistence').projectDir = file('./infrastructure/adapter/driven/persistence')
+include ':domain:model'
+include ':domain:port:out'
+
+include ':infrastructure:adapter:drive-in:web'
+include ':infrastructure:adapter:driven:persistence'
