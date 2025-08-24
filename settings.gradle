@@ -1,0 +1,5 @@
+rootProject.name = 'credi-ya'
+
+include ':app-loans'
+
+findProject(':app-loans').projectDir = file('./applications/app-loans')
