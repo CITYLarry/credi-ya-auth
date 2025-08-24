@@ -28,7 +28,7 @@ public record RegisterUserCommand(
      * @return A new User domain object.
      */
     public User toDomainUser() {
-        return new User(
+        return User.newUser(
                 this.firstName,
                 this.lastName,
                 this.email,

@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':port-in')
+    implementation project(':exception')
+
+    implementation('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')
+
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+
+    implementation('org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0')
+    implementation('com.fasterxml.jackson.core:jackson-databind')
+    implementation('com.fasterxml.jackson.module:jackson-module-parameter-names')
+}

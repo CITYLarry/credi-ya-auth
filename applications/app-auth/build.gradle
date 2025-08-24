@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(':service')
+    implementation project(':web')
+    implementation project(':persistence')
+
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+
+    implementation('org.springdoc:springdoc-openapi-starter-webflux-ui:2.5.0')
+    implementation('com.fasterxml.jackson.core:jackson-databind')
+    implementation('com.fasterxml.jackson.module:jackson-module-parameter-names')
+
+    runtimeOnly('com.h2database:h2')
+    runtimeOnly('io.r2dbc:r2dbc-h2')
+}
