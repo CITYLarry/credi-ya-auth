@@ -1,4 +1,4 @@
-package com.creditya.auth.application.ports.in;
+package com.crediya.auth.application.ports.in;
 
 import com.crediya.auth.domain.model.User;
 
@@ -24,6 +24,8 @@ public record RegisterUserCommand(
         Objects.requireNonNull(firstName, "First name must not be null");
         Objects.requireNonNull(lastName, "Last name must not be null");
         Objects.requireNonNull(email, "Email must not be null");
+        Objects.requireNonNull(birthDate, "Birth date must not be null");
+        Objects.requireNonNull(address, "Address must not be null");
         Objects.requireNonNull(baseSalary, "Base salary must not be null");
     }
 

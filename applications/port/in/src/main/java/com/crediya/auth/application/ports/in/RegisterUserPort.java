@@ -1,4 +1,4 @@
-package com.creditya.auth.application.ports.in;
+package com.crediya.auth.application.ports.in;
 
 import com.crediya.auth.domain.model.User;
 import reactor.core.publisher.Mono;

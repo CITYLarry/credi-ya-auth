@@ -1,4 +1,4 @@
-package com.citylarry.entity;
+package com.crediya.auth.infrastructure.driven.persistence.entity;
 
 
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "usuario")
+@Table("usuario")
 public class UserData {
 
     @Id

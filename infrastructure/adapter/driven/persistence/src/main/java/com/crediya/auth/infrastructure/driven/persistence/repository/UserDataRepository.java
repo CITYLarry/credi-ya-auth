@@ -1,6 +1,6 @@
-package com.citylarry.repository;
+package com.crediya.auth.infrastructure.driven.persistence.repository;
 
-import com.citylarry.entity.UserData;
+import com.crediya.auth.infrastructure.driven.persistence.entity.UserData;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;

@@ -1,7 +1,7 @@
-package com.citylarry.mapper;
+package com.crediya.auth.infrastructure.driven.persistence.mapper;
 
 import com.crediya.auth.domain.model.User;
-import com.citylarry.entity.UserData;
+import com.crediya.auth.infrastructure.driven.persistence.entity.UserData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

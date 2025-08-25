@@ -1,4 +1,4 @@
-package com.creditya.auth.domain.model;
+package com.crediya.auth.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,6 +42,10 @@ public class User {
         validateFieldNotNullOrEmpty(lastName, "Last name cannot be null or empty.");
         validateFieldNotNullOrEmpty(email, "Email cannot be null or empty.");
         validateEmailFormat(email);
+
+        Objects.requireNonNull(birthDate, "Birth date cannot be null.");
+        validateFieldNotNullOrEmpty(address, "Address cannot be null or empty.");
+
         validateSalary(baseSalary);
 
         this.id = id;

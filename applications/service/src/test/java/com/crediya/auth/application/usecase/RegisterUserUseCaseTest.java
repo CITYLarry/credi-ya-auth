@@ -1,7 +1,8 @@
-package com.creditya.auth.application.usecase;
+package com.crediya.auth.application.usecase;
 
-import com.creditya.auth.application.exceptions.EmailAlreadyExistsException;
-import com.creditya.auth.application.ports.in.RegisterUserCommand;
+import com.crediya.auth.application.exceptions.EmailAlreadyExistsException;
+import com.crediya.auth.application.ports.in.RegisterUserCommand;
+import com.crediya.auth.application.usecase.RegisterUserUseCase;
 import com.crediya.auth.domain.model.User;
 import com.crediya.auth.domain.ports.out.UserRepository;
 import org.junit.jupiter.api.Test;

@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     implementation project(':applications:service')
-    implementation project(':infrastructure:adapter:drive-in:web')
+    implementation project(':infrastructure:adapter:drivin:web')
     implementation project(':infrastructure:adapter:driven:persistence')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -32,4 +32,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
 }

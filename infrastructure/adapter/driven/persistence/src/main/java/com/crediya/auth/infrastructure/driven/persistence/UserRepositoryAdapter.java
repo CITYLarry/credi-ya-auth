@@ -1,8 +1,8 @@
-package com.citylarry;
+package com.crediya.auth.infrastructure.driven.persistence;
 
-import com.citylarry.entity.UserData;
-import com.citylarry.mapper.UserMapper;
-import com.citylarry.repository.UserDataRepository;
+import com.crediya.auth.infrastructure.driven.persistence.entity.UserData;
+import com.crediya.auth.infrastructure.driven.persistence.mapper.UserMapper;
+import com.crediya.auth.infrastructure.driven.persistence.repository.UserDataRepository;
 import com.crediya.auth.domain.model.User;
 import com.crediya.auth.domain.ports.out.UserRepository;
 import lombok.RequiredArgsConstructor;
