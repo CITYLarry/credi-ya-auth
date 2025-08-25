@@ -34,22 +34,37 @@ CrediYa Authentication Service es un microservicio de autenticación y gestión 
 
 ## Arquitectura
 
-El proyecto sigue una arquitectura hexagonal (ports and adapters) con las siguientes capas:
+El proyecto sigue una arquitectura hexagonal (ports and adapters) organizada en módulos Gradle independientes con las siguientes capas:
 
 ```
-src/main/java/com/crediya/auth/
-├── application/          # Casos de uso y lógica de aplicación
-│   ├── exceptions/       # Excepciones específicas de la aplicación
-│   ├── ports/           # Puertos de entrada y salida
-│   └── service/         # Implementación de casos de uso
-├── domain/              # Lógica de negocio y entidades
-│   ├── model/           # Entidades de dominio
-│   └── ports/           # Puertos del dominio
-└── infrastructure/      # Adaptadores e infraestructura
-    └── adapters/
-        ├── driven/      # Adaptadores de salida (base de datos, etc.)
-        └── drivin/      # Adaptadores de entrada (web, etc.)
+├── applications/                    # Capa de aplicación
+│   ├── app-auth/                   # Aplicación principal ejecutable
+│   ├── exception/                  # Excepciones de negocio
+│   ├── port/                       # Puertos de entrada
+│   │   └── in/                     # Puertos de entrada (use cases)
+│   └── service/                    # Implementación de casos de uso
+├── domain/                         # Capa de dominio
+│   ├── model/                      # Entidades de dominio
+│   └── port/                       # Puertos de salida
+│       └── out/                    # Puertos de salida (repositories)
+└── infrastructure/                 # Capa de infraestructura
+    └── adapter/                    # Adaptadores
+        ├── drivin/                 # Adaptadores de entrada
+        │   └── web/                # Controladores REST
+        └── driven/                 # Adaptadores de salida
+            └── persistence/        # Persistencia de datos
 ```
+
+### Descripción de Módulos
+
+- **applications/app-auth**: Módulo principal que contiene la aplicación ejecutable de Spring Boot
+- **applications/exception**: Excepciones específicas del negocio
+- **applications/port/in**: Puertos de entrada que definen los casos de uso
+- **applications/service**: Implementación de los casos de uso y lógica de aplicación
+- **domain/model**: Entidades de dominio con reglas de negocio
+- **domain/port/out**: Puertos de salida para persistencia y servicios externos
+- **infrastructure/adapter/drivin/web**: Adaptadores de entrada (controladores REST)
+- **infrastructure/adapter/driven/persistence**: Adaptadores de salida (repositorios, mappers)
 
 ## Requisitos
 
