@@ -8,5 +8,6 @@ include ':applications:service'
 include ':domain:model'
 include ':domain:port-out'
 
-include ':infrastructure:adapter:drivin:web'
+include ':infrastructure:adapter:driving:web'
 include ':infrastructure:adapter:driven:persistence'
+include ':infrastructure:adapter:driven:security'
