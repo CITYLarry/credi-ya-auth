@@ -1,9 +1,11 @@
 package com.crediya.auth.infrastructure.driven.persistence;
 
+import com.crediya.auth.domain.model.Role;
 import com.crediya.auth.domain.model.User;
 import com.crediya.auth.infrastructure.driven.persistence.entity.UserData;
-import com.crediya.auth.infrastructure.driven.persistence.mapper.UserMapper;
 import com.crediya.auth.infrastructure.driven.persistence.mapper.UserMapperImpl;
+import com.crediya.auth.infrastructure.driven.persistence.mapper.RoleMapperImpl;
+import com.crediya.auth.infrastructure.driven.persistence.repository.RoleDataRepository;
 import com.crediya.auth.infrastructure.driven.persistence.repository.UserDataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,27 +25,35 @@ import java.time.LocalDate;
  * @DataR2dbcTest loads the persistence context, including an in-memory H2 database.
  */
 @DataR2dbcTest
-@Import(UserMapperImpl.class)
+@Import({
+        UserRepositoryAdapter.class, UserMapperImpl.class,
+        RoleRepositoryAdapter.class, RoleMapperImpl.class
+})
 public class UserRepositoryAdapterTest {
 
     @SpringBootApplication
     @EnableR2dbcRepositories
-    static class TestConfiguration {
-    }
+    static class TestConfiguration {}
 
     @Autowired
     private UserDataRepository userDataRepository;
 
     @Autowired
-    private UserMapper userMapper;
+    private RoleDataRepository roleDataRepository;
 
+    @Autowired
     private UserRepositoryAdapter userRepositoryAdapter;
+
+    private Role clientRole;
 
 
     @BeforeEach
     void setUp() {
         userDataRepository.deleteAll().block();
-        userRepositoryAdapter = new UserRepositoryAdapter(userDataRepository, userMapper);
+
+        clientRole = roleDataRepository.findByName("ROLE_CLIENT")
+                .map(roleData -> new Role(roleData.getId(), roleData.getName()))
+                .block();
     }
 
     @Test
@@ -57,7 +67,7 @@ public class UserRepositoryAdapterTest {
                 "3001234567",
                 LocalDate.of(1995, 11, 11),
                 "456 Oak Ave",
-                "APPLICANT",
+                clientRole,
                 new BigDecimal("5000000")
         );
 
@@ -66,8 +76,9 @@ public class UserRepositoryAdapterTest {
         StepVerifier.create(savedUserMono)
                 .expectNextMatches(savedUser ->
                         savedUser.getId() != null &&
-                                savedUser.getEmail().equals(userToSave.getEmail()) &&
-                                savedUser.getFirstName().equals(userToSave.getFirstName())
+                        savedUser.getEmail().equals(userToSave.getEmail()) &&
+                        savedUser.getRole() != null &&
+                        savedUser.getRole().getName().equals("ROLE_CLIENT")
                 )
                 .verifyComplete();
     }
@@ -84,7 +95,7 @@ public class UserRepositoryAdapterTest {
                 .phoneNumber("3001234567")
                 .birthDate(LocalDate.of(1995, 11, 11))
                 .address("456 Oak Ave")
-                .idRole("APPLICANT")
+                .idRole(clientRole.getId())
                 .build();
 
         Mono<Void> setup = userDataRepository.save(userData).then();

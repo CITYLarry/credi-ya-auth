@@ -20,6 +20,7 @@ public interface UserMapper {
      * @param userData The persistence entity.
      * @return The corresponding User domain model.
      */
+    @Mapping(target = "role", ignore = true)
     User toDomain(UserData userData);
 
     /**
@@ -28,6 +29,7 @@ public interface UserMapper {
      * @param user The domain model.
      * @return The corresponding UserData persistence entity.
      */
+    @Mapping(source = "role.id", target = "idRole")
     @Mapping(target = "id", ignore = true)
     UserData toData(User user);
 }

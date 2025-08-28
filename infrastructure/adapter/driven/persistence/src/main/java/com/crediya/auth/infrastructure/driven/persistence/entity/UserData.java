@@ -48,7 +48,7 @@ public class UserData {
     private String address;
 
     @Column("id_rol")
-    private String idRole;
+    private Long idRole;
 
     @Column("salario_base")
     private BigDecimal baseSalary;

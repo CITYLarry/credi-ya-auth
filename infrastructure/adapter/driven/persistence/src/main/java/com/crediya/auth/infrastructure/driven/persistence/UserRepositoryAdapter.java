@@ -46,6 +46,17 @@ public class UserRepositoryAdapter implements UserRepository {
 
         return userDataRepository
                 .save(userDataToSave)
-                .map(userMapper::toDomain);
+                .map(savedUserData -> new User(
+                        savedUserData.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getIdentityNumber(),
+                        user.getPhoneNumber(),
+                        user.getBirthDate(),
+                        user.getAddress(),
+                        user.getRole(),
+                        user.getBaseSalary()
+                ));
     }
 }
