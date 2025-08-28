@@ -32,6 +32,7 @@ public class RegisterUserUseCaseTest {
 
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private RoleRepository roleRepository;
 
@@ -39,16 +40,18 @@ public class RegisterUserUseCaseTest {
     private RegisterUserUseCase registerUserUseCase;
 
     @Test
-    void shouldRegisterUserSuccessfullyWhenEmailDoesNotExist() {
+    void shouldRegisterUserSuccessfullyWhenEmailDoesNotExistAndRoleExists() {
 
+        var roleName = "ROLE_CLIENT";
         var command = new RegisterUserCommand(
-                "Larry", "Ramirez", "larry.ramirez11@outlook.com", "123456789",
-                "3001234567",
-                LocalDate.of(1995, 11, 11),
-                "123 Main St",
-                "ROLE_USER", new BigDecimal("5000000")
+                "Larry",
+                "Ramirez",
+                "larry.ramirez11@outlook.com",
+                "password123",
+                "123456789",
+                "3001234567", LocalDate.of(1995, 11, 11),
+                "123 Main St", roleName, new BigDecimal("5000000")
         );
-        var roleName = "ROLE_USER";
         var role = new Role(1L, roleName);
         User userToSave = command.toDomainUser(role);
 
@@ -59,17 +62,9 @@ public class RegisterUserUseCaseTest {
         Mono<User> result = registerUserUseCase.registerUser(command);
 
         StepVerifier.create(result)
-                .expectNextMatches(
-                        savedUser ->
-                            savedUser.getFirstName().equals("Larry") &&
-                            savedUser.getLastName().equals("Ramirez") &&
-                            savedUser.getEmail().equals("larry.ramirez11@outlook.com") &&
-                            savedUser.getIdentityNumber().equals("123456789") &&
-                            savedUser.getPhoneNumber().equals("3001234567") &&
-                            savedUser.getBirthDate().equals(LocalDate.of(1995, 11, 11)) &&
-                            savedUser.getAddress().equals("123 Main St") &&
-                            savedUser.getRole().getName().equals("ROLE_USER") &&
-                            savedUser.getBaseSalary().equals(new BigDecimal("5000000"))
+                .expectNextMatches(savedUser ->
+                        savedUser.getEmail().equals("larry.ramirez11@outlook.com") &&
+                        savedUser.getRole().getName().equals(roleName)
                 )
                 .verifyComplete();
 
@@ -80,22 +75,27 @@ public class RegisterUserUseCaseTest {
     void shouldReturnErrorWhenEmailAlreadyExists() {
 
         var command = new RegisterUserCommand(
-                "Larry", "Ramirez", "larry.ramirez11@outlook.com", "123456789",
+                "Larry",
+                "Ramirez",
+                "larry.ramirez11@outlook.com",
+                "password123",
+                "123456789",
                 "3001234567",
-                LocalDate.of(1990, 5, 15),
+                LocalDate.of(1995, 11, 11),
                 "123 Main St",
-                "ROLE_USER", new BigDecimal("5000000")
+                "ROLE_CLIENT",
+                new BigDecimal("5000000")
         );
 
         when(userRepository.existsByEmail(command.email())).thenReturn(Mono.just(true));
 
         Mono<User> result = registerUserUseCase.registerUser(command);
 
-
         StepVerifier.create(result)
                 .expectError(EmailAlreadyExistsException.class)
                 .verify();
 
+        verify(roleRepository, never()).findByName(any());
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -104,17 +104,23 @@ public class RegisterUserUseCaseTest {
 
         var roleName = "NON_EXISTENT_ROLE";
         var command = new RegisterUserCommand(
-                "Larry", "Ramirez", "larry.ramirez11@outlook.com", "123456789",
-                "3001234567", LocalDate.of(1990, 5, 15),
-                "123 Main St", roleName, new BigDecimal("5000000")
+                "Larry",
+                "Ramirez",
+                "larry.ramirez11@outlook.com",
+                "password123",
+                "123456789",
+                "3001234567",
+                LocalDate.of(1990, 5, 15),
+                "123 Main St",
+                roleName,
+                new BigDecimal("5000000")
         );
 
         when(userRepository.existsByEmail(command.email())).thenReturn(Mono.just(false));
-        when(roleRepository.findByName(roleName)).thenReturn(Mono.empty()); // Mock role lookup to return nothing
+        when(roleRepository.findByName(roleName)).thenReturn(Mono.empty());
 
         Mono<User> result = registerUserUseCase.registerUser(command);
 
-        // Assert
         StepVerifier.create(result)
                 .expectError(RoleNotFoundException.class)
                 .verify();

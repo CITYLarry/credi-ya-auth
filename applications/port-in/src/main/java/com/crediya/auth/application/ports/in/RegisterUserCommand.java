@@ -14,6 +14,7 @@ public record RegisterUserCommand(
         String firstName,
         String lastName,
         String email,
+        String password,
         String identityNumber,
         String phoneNumber,
         LocalDate birthDate,
@@ -25,6 +26,7 @@ public record RegisterUserCommand(
         Objects.requireNonNull(firstName, "First name must not be null");
         Objects.requireNonNull(lastName, "Last name must not be null");
         Objects.requireNonNull(email, "Email must not be null");
+        Objects.requireNonNull(password, "Password cannot be null");
         Objects.requireNonNull(birthDate, "Birth date must not be null");
         Objects.requireNonNull(address, "Address must not be null");
         Objects.requireNonNull(roleName, "Role name must not be null");
@@ -41,6 +43,7 @@ public record RegisterUserCommand(
                 this.firstName,
                 this.lastName,
                 this.email,
+                this.password,
                 this.identityNumber,
                 this.phoneNumber,
                 this.birthDate,
