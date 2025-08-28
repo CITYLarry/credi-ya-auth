@@ -10,6 +10,7 @@ CREATE TABLE usuario (
                          nombre VARCHAR(255) NOT NULL,
                          apellido VARCHAR(255) NOT NULL,
                          email VARCHAR(255) NOT NULL UNIQUE,
+                         password VARCHAR(255) NOT NULL,
                          documento_identidad VARCHAR(50) NOT NULL UNIQUE,
                          telefono VARCHAR(20),
                          fecha_nacimiento DATE NOT NULL,

@@ -18,4 +18,12 @@ public interface UserDataRepository extends R2dbcRepository<UserData, Long> {
      * @return A Mono<Boolean> emitting true if the email exists, false otherwise.
      */
     Mono<Boolean> existsByEmail(String email);
+
+    /**
+     * Finds a user entity by its unique email address.
+     *
+     * @param email The email of the user to find.
+     * @return A Mono emitting the found UserData, or empty if no user is found.
+     */
+    Mono<UserData> findByEmail(String email);
 }

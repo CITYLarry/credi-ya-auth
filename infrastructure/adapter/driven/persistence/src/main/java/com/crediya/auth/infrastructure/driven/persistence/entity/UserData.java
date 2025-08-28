@@ -35,6 +35,9 @@ public class UserData {
     @Column("email")
     private String email;
 
+    @Column("password")
+    private String password;
+
     @Column("documento_identidad")
     private String identityNumber;
 

@@ -63,6 +63,7 @@ public class UserRepositoryAdapterTest {
                 "Larry",
                 "Ramirez",
                 "larry.ramirez11@outlook.com",
+                "password",
                 "123456789",
                 "3001234567",
                 LocalDate.of(1995, 11, 11),
@@ -77,7 +78,6 @@ public class UserRepositoryAdapterTest {
                 .expectNextMatches(savedUser ->
                         savedUser.getId() != null &&
                         savedUser.getEmail().equals(userToSave.getEmail()) &&
-                        savedUser.getRole() != null &&
                         savedUser.getRole().getName().equals("ROLE_CLIENT")
                 )
                 .verifyComplete();
@@ -90,6 +90,7 @@ public class UserRepositoryAdapterTest {
                 .firstName("Larry")
                 .lastName("Ramirez")
                 .email("larry.ramirez11@outlook.com")
+                .password("encodedPassword")
                 .baseSalary(new BigDecimal("5000000"))
                 .identityNumber("123456789")
                 .phoneNumber("3001234567")
@@ -114,6 +115,46 @@ public class UserRepositoryAdapterTest {
 
         StepVerifier.create(existsMono)
                 .expectNext(false)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldFindByEmailAndReturnCompleteUser() {
+
+        String email = "larry.ramirez11@outlook.com";
+        UserData userData = UserData.builder()
+                .firstName("Larry")
+                .lastName("Ramirez")
+                .email("larry.ramirez11@outlook.com")
+                .password("encodedPassword")
+                .baseSalary(new BigDecimal("5000000"))
+                .identityNumber("123456789")
+                .phoneNumber("3001234567")
+                .birthDate(LocalDate.of(1995, 11, 11))
+                .address("456 Oak Ave")
+                .idRole(clientRole.getId())
+                .build();
+        userDataRepository.save(userData).block();
+
+        Mono<User> foundUserMono = userRepositoryAdapter.findByEmail(email);
+
+        StepVerifier.create(foundUserMono)
+                .expectNextMatches(user ->
+                        user.getEmail().equals(email) &&
+                                user.getFirstName().equals("Larry") &&
+                                user.getRole() != null &&
+                                user.getRole().getId().equals(clientRole.getId())
+                )
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldReturnEmptyWhenFindByEmailFindsNoUser() {
+
+        Mono<User> foundUserMono = userRepositoryAdapter.findByEmail("nosuchuser@example.com");
+
+        StepVerifier.create(foundUserMono)
+                .expectNextCount(0)
                 .verifyComplete();
     }
 }
