@@ -1,5 +1,6 @@
 package com.crediya.auth.application.ports.in;
 
+import com.crediya.auth.domain.model.Role;
 import com.crediya.auth.domain.model.User;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public record RegisterUserCommand(
         String phoneNumber,
         LocalDate birthDate,
         String address,
-        String idRole,
+        String roleName,
         BigDecimal baseSalary
 ) {
     public RegisterUserCommand {
@@ -26,6 +27,7 @@ public record RegisterUserCommand(
         Objects.requireNonNull(email, "Email must not be null");
         Objects.requireNonNull(birthDate, "Birth date must not be null");
         Objects.requireNonNull(address, "Address must not be null");
+        Objects.requireNonNull(roleName, "Role name must not be null");
         Objects.requireNonNull(baseSalary, "Base salary must not be null");
     }
 
@@ -34,7 +36,7 @@ public record RegisterUserCommand(
      *
      * @return A new User domain object.
      */
-    public User toDomainUser() {
+    public User toDomainUser(Role role) {
         return User.newUser(
                 this.firstName,
                 this.lastName,
@@ -43,7 +45,7 @@ public record RegisterUserCommand(
                 this.phoneNumber,
                 this.birthDate,
                 this.address,
-                this.idRole,
+                role,
                 this.baseSalary
         );
     }

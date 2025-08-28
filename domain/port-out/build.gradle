@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.creditya.domain.port'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':domain:model')
+
+    implementation 'io.projectreactor:reactor-core'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -21,7 +21,7 @@ public class User {
     private final String phoneNumber;
     private final LocalDate birthDate;
     private final String address;
-    private final String idRole;
+    private final Role role;
     private final BigDecimal baseSalary;
 
 
@@ -34,7 +34,7 @@ public class User {
             String phoneNumber,
             LocalDate birthDate,
             String address,
-            String idRole,
+            Role role,
             BigDecimal baseSalary
             ) {
 
@@ -44,8 +44,9 @@ public class User {
         validateEmailFormat(email);
 
         Objects.requireNonNull(birthDate, "Birth date cannot be null.");
-        validateFieldNotNullOrEmpty(address, "Address cannot be null or empty.");
+        Objects.requireNonNull(role, "Role cannot be null.");
 
+        validateFieldNotNullOrEmpty(address, "Address cannot be null or empty.");
         validateSalary(baseSalary);
 
         this.id = id;
@@ -56,7 +57,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.address = address;
-        this.idRole = idRole;
+        this.role = role;
         this.baseSalary = baseSalary;
     }
 
@@ -68,7 +69,7 @@ public class User {
             String phoneNumber,
             LocalDate birthDate,
             String address,
-            String idRole,
+            Role role,
             BigDecimal baseSalary) {
         return new User(
                 null,
@@ -79,7 +80,7 @@ public class User {
                 phoneNumber,
                 birthDate,
                 address,
-                idRole,
+                role,
                 baseSalary);
     }
 
@@ -135,8 +136,8 @@ public class User {
         return address;
     }
 
-    public String getIdRole() {
-        return idRole;
+    public Role getRole() {
+        return role;
     }
 
     public BigDecimal getBaseSalary() {

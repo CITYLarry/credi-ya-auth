@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation project(':domain:model')
-    implementation project(':applications:port:in')
+    implementation project(':applications:port-in')
     implementation project(':applications:exception')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

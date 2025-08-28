@@ -2,11 +2,11 @@ rootProject.name = 'credi-ya-auth'
 
 include ':applications:app-auth'
 include ':applications:exception'
-include ':applications:port:in'
+include ':applications:port-in'
 include ':applications:service'
 
 include ':domain:model'
-include ':domain:port:out'
+include ':domain:port-out'
 
 include ':infrastructure:adapter:drivin:web'
 include ':infrastructure:adapter:driven:persistence'
