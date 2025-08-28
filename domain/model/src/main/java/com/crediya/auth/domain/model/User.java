@@ -17,6 +17,7 @@ public class User {
     private final String firstName;
     private final String lastName;
     private final String email;
+    private final String password;
     private final String identityNumber;
     private final String phoneNumber;
     private final LocalDate birthDate;
@@ -30,6 +31,7 @@ public class User {
             String firstName,
             String lastName,
             String email,
+            String password,
             String identityNumber,
             String phoneNumber,
             LocalDate birthDate,
@@ -42,6 +44,7 @@ public class User {
         validateFieldNotNullOrEmpty(lastName, "Last name cannot be null or empty.");
         validateFieldNotNullOrEmpty(email, "Email cannot be null or empty.");
         validateEmailFormat(email);
+        validateFieldNotNullOrEmpty(password, "Password cannot be null or empty.");
 
         Objects.requireNonNull(birthDate, "Birth date cannot be null.");
         Objects.requireNonNull(role, "Role cannot be null.");
@@ -53,6 +56,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
         this.identityNumber = identityNumber;
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
@@ -65,6 +69,7 @@ public class User {
             String firstName,
             String lastName,
             String email,
+            String password,
             String identityNumber,
             String phoneNumber,
             LocalDate birthDate,
@@ -76,6 +81,7 @@ public class User {
                 firstName,
                 lastName,
                 email,
+                password,
                 identityNumber,
                 phoneNumber,
                 birthDate,
@@ -118,6 +124,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getIdentityNumber() {

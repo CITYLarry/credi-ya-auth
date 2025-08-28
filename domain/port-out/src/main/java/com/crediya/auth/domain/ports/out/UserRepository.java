@@ -23,4 +23,12 @@ public interface UserRepository {
      * @return A reactive stream emitting the saved User, potentially with updated state from the database (like an ID).
      */
     Mono<User> save(User user);
+
+    /**
+     * Finds a user by their unique email address.
+     *
+     * @param email The email of the user to find.
+     * @return A Mono emitting the found User, or an empty Mono if no user is found with that email.
+     */
+    Mono<User> findByEmail(String email);
 }
