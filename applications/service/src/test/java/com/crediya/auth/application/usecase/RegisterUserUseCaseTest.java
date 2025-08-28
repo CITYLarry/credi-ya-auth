@@ -1,8 +1,11 @@
 package com.crediya.auth.application.usecase;
 
 import com.crediya.auth.application.exceptions.EmailAlreadyExistsException;
+import com.crediya.auth.application.exceptions.RoleNotFoundException;
 import com.crediya.auth.application.ports.in.RegisterUserCommand;
+import com.crediya.auth.domain.model.Role;
 import com.crediya.auth.domain.model.User;
+import com.crediya.auth.domain.ports.out.RoleRepository;
 import com.crediya.auth.domain.ports.out.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +32,8 @@ public class RegisterUserUseCaseTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private RoleRepository roleRepository;
 
     @InjectMocks
     private RegisterUserUseCase registerUserUseCase;
@@ -39,13 +44,16 @@ public class RegisterUserUseCaseTest {
         var command = new RegisterUserCommand(
                 "Larry", "Ramirez", "larry.ramirez11@outlook.com", "123456789",
                 "3001234567",
-                LocalDate.of(1990, 5, 15),
+                LocalDate.of(1995, 11, 11),
                 "123 Main St",
                 "ROLE_USER", new BigDecimal("5000000")
         );
-        User userToSave = command.toDomainUser();
+        var roleName = "ROLE_USER";
+        var role = new Role(1L, roleName);
+        User userToSave = command.toDomainUser(role);
 
         when(userRepository.existsByEmail(command.email())).thenReturn(Mono.just(false));
+        when(roleRepository.findByName(roleName)).thenReturn(Mono.just(role));
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(userToSave));
 
         Mono<User> result = registerUserUseCase.registerUser(command);
@@ -58,9 +66,9 @@ public class RegisterUserUseCaseTest {
                             savedUser.getEmail().equals("larry.ramirez11@outlook.com") &&
                             savedUser.getIdentityNumber().equals("123456789") &&
                             savedUser.getPhoneNumber().equals("3001234567") &&
-                            savedUser.getBirthDate().equals(LocalDate.of(1990, 5, 15)) &&
+                            savedUser.getBirthDate().equals(LocalDate.of(1995, 11, 11)) &&
                             savedUser.getAddress().equals("123 Main St") &&
-                            savedUser.getIdRole().equals("ROLE_USER") &&
+                            savedUser.getRole().getName().equals("ROLE_USER") &&
                             savedUser.getBaseSalary().equals(new BigDecimal("5000000"))
                 )
                 .verifyComplete();
@@ -86,6 +94,29 @@ public class RegisterUserUseCaseTest {
 
         StepVerifier.create(result)
                 .expectError(EmailAlreadyExistsException.class)
+                .verify();
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void shouldReturnErrorWhenRoleIsNotFound() {
+
+        var roleName = "NON_EXISTENT_ROLE";
+        var command = new RegisterUserCommand(
+                "Larry", "Ramirez", "larry.ramirez11@outlook.com", "123456789",
+                "3001234567", LocalDate.of(1990, 5, 15),
+                "123 Main St", roleName, new BigDecimal("5000000")
+        );
+
+        when(userRepository.existsByEmail(command.email())).thenReturn(Mono.just(false));
+        when(roleRepository.findByName(roleName)).thenReturn(Mono.empty()); // Mock role lookup to return nothing
+
+        Mono<User> result = registerUserUseCase.registerUser(command);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectError(RoleNotFoundException.class)
                 .verify();
 
         verify(userRepository, never()).save(any(User.class));
