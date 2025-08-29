@@ -5,6 +5,7 @@ import com.crediya.auth.application.exceptions.RoleNotFoundException;
 import com.crediya.auth.application.ports.in.RegisterUserCommand;
 import com.crediya.auth.application.ports.in.RegisterUserPort;
 import com.crediya.auth.domain.model.User;
+import com.crediya.auth.domain.ports.out.PasswordEncoderPort;
 import com.crediya.auth.domain.ports.out.RoleRepository;
 import com.crediya.auth.domain.ports.out.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class RegisterUserUseCase implements RegisterUserPort {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoderPort passwordEncoderPort;
 
     /**
      * Orchestrates the registration of a new user.
@@ -45,7 +47,21 @@ public class RegisterUserUseCase implements RegisterUserPort {
                             }))
                             .flatMap(role -> {
                                 log.debug("Role '{}' found. Proceeding with user creation.", command.roleName());
-                                User userToRegister = command.toDomainUser(role);
+
+                                String encodedPassword = passwordEncoderPort.encode(command.password());
+
+                                User userToRegister = new User(null,
+                                        command.firstName(),
+                                        command.lastName(),
+                                        command.email(),
+                                        encodedPassword,
+                                        command.identityNumber(),
+                                        command.phoneNumber(),
+                                        command.birthDate(),
+                                        command.address(), role,
+                                        command.baseSalary()
+                                );
+
                                 return userRepository.save(userToRegister)
                                         .doOnSuccess(savedUser -> log.info("Successfully saved user with ID: {} and email: {}", savedUser.getId(), savedUser.getEmail()));
                             });

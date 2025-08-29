@@ -1,8 +1,13 @@
 package com.crediya.auth.infrastructure.entrypoints.web;
 
 import com.crediya.auth.application.exceptions.EmailAlreadyExistsException;
+import com.crediya.auth.application.exceptions.InvalidCredentialsException;
+import com.crediya.auth.application.exceptions.RoleNotFoundException;
+import com.crediya.auth.application.ports.in.LoginPort;
 import com.crediya.auth.application.ports.in.RegisterUserPort;
 import com.crediya.auth.infrastructure.entrypoints.web.dto.ErrorResponse;
+import com.crediya.auth.infrastructure.entrypoints.web.dto.LoginRequest;
+import com.crediya.auth.infrastructure.entrypoints.web.dto.LoginResponse;
 import com.crediya.auth.infrastructure.entrypoints.web.dto.UserRegistrationRequest;
 import com.crediya.auth.infrastructure.entrypoints.web.dto.UserRegistrationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +35,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-@Tag(name = "User Management", description = "APIs for user registration and management")
+@Tag(name = "User Management", description = "APIs for user registration and authentication")
 public class UserController {
 
     private final RegisterUserPort registerUserPort;
+    private final LoginPort loginPort;
 
     /**
      * Handles the HTTP POST request to register a new user.
@@ -41,7 +47,7 @@ public class UserController {
      * @param request The request body containing the user's data, which is validated automatically.
      * @return A {@link Mono} emitting a {@link UserRegistrationResponse} upon successful creation.
      */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Register a new user",
@@ -60,6 +66,18 @@ public class UserController {
                 .flatMap(registerUserPort::registerUser)
                 .map(UserRegistrationResponse::fromDomain)
                 .doOnSuccess(response -> log.info("Successfully registered user with email: {}", response.getEmail()));
+    }
+
+    @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Authenticate a user", description = "Authenticates a user with email and password, returning a JWT.")
+    @ApiResponse(responseCode = "200", description = "Authentication successful", content = @Content(schema = @Schema(implementation = LoginResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public Mono<LoginResponse> loginUser(@Valid @RequestBody LoginRequest request) {
+        log.info("Received login request for email: {}", request.getEmail());
+        return Mono.just(request)
+                .map(LoginRequest::toCommand)
+                .flatMap(loginPort::login)
+                .map(LoginResponse::fromToken);
     }
 
     /**
@@ -89,5 +107,19 @@ public class UserController {
     public Mono<ErrorResponse> handleEmailExistsException(EmailAlreadyExistsException ex) {
         log.warn("Registration failed: {}", ex.getMessage());
         return Mono.just(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler({RoleNotFoundException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Mono<ErrorResponse> handleBadRequestBusinessExceptions(RuntimeException ex) {
+        log.warn("Bad request during registration: {}", ex.getMessage());
+        return Mono.just(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Mono<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        log.warn("Authentication failed: {}", ex.getMessage());
+        return Mono.just(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
     }
 }
