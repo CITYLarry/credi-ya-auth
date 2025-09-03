@@ -11,6 +11,9 @@ spring:
     init:
       mode: always
 
+server:
+  port: 8081
+
 jwt:
   secret: OGRiMi1iNDgwLTQ3MjgtYTQ5OC0zMDQ2YmMxM2E0YjctY3JlZGl5YS1zZWNyZXQta2V5LTIwMjQ=
   expiration: 3600000
