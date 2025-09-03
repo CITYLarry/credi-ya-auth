@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.creditya.infrastructure.adapter.driven'
+group = 'com.crediya.infrastructure.adapter.driven'
 version = '0.0.1-SNAPSHOT'
 
 java {

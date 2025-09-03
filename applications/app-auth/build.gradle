@@ -17,8 +17,10 @@ repositories {
 
 dependencies {
     implementation project(':applications:service')
+
     implementation project(':infrastructure:adapter:driving:web')
     implementation project(':infrastructure:adapter:driven:persistence')
+    implementation project(':infrastructure:adapter:driven:security')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-security'
